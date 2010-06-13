@@ -2,12 +2,12 @@ require 'spec_helper'
 
 describe <%= controller_class_name %>Controller do
 
-  def <%= mock_file_name %>(stubs={})
-    @<%= mock_file_name %> ||= mock_model(<%= class_name %>, stubs)
-  end
-
   <% unless options[:singleton] -%>
   describe "GET index" do
+    def <%= mock_file_name %>(stubs={})
+      @<%= mock_file_name %> ||= Factory.create(:<%= class_name.underscore %>)
+    end
+
     it "assigns all <%= table_name.pluralize %> as @<%= table_name.pluralize %>" do
       <%= stub! orm_class.all(class_name) %>.and_return([<%= mock_file_name %>])
       get :index
@@ -44,13 +44,13 @@ describe <%= controller_class_name %>Controller do
 
     describe "with valid params" do
       it "assigns a newly created <%= file_name %> as @<%= file_name %>" do
-        <%= stub! orm_class.build(class_name, params) %>.and_return(<%= mock_file_name(:save => true) %>)
+        <%= stub! orm_class.build(class_name, params) %>.and_return(<%= mock_file_name %>)
         post :create, :<%= file_name %> => <%= params %>
         assigns[:<%= file_name %>].should equal(<%= mock_file_name %>)
       end
 
       it "redirects to the created <%= file_name %>" do
-        <%= stub! orm_class.build(class_name) %>.and_return(<%= mock_file_name(:save => true) %>)
+        <%= stub! orm_class.build(class_name) %>.and_return(<%= mock_file_name %>)
         post :create, :<%= file_name %> => {}
         response.should redirect_to(<%= table_name.singularize %>_url(<%= mock_file_name %>))
       end
@@ -82,13 +82,13 @@ describe <%= controller_class_name %>Controller do
       end
 
       it "assigns the requested <%= file_name %> as @<%= file_name %>" do
-        <%= stub! orm_class.find(class_name) %>.and_return(<%= mock_file_name(:update_attributes => true) %>)
+        <%= stub! orm_class.find(class_name) %>.and_return(<%= mock_file_name %>)
         put :update, :id => "1"
         assigns[:<%= file_name %>].should equal(<%= mock_file_name %>)
       end
 
       it "redirects to the <%= file_name %>" do
-        <%= stub! orm_class.find(class_name) %>.and_return(<%= mock_file_name(:update_attributes => true) %>)
+        <%= stub! orm_class.find(class_name) %>.and_return(<%= mock_file_name %>)
         put :update, :id => "1"
         response.should redirect_to(<%= table_name.singularize %>_url(<%= mock_file_name %>))
       end
@@ -118,7 +118,7 @@ describe <%= controller_class_name %>Controller do
     end
 
     it "redirects to the <%= table_name %> list" do
-      <%= stub! orm_class.find(class_name) %>.and_return(<%= mock_file_name(:destroy => true) %>)
+      <%= stub! orm_class.find(class_name) %>.and_return(<%= mock_file_name %>)
       delete :destroy, :id => "1"
       response.should redirect_to(<%= table_name %>_url)
     end
